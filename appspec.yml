@@ -1,9 +1,4 @@
 version: 0.0
-Resources:
-  - myEKSApp:
-      Type: AWS::EKS::Application
-      Properties:
-        TaskDefinition: ""
 hooks:
   AfterInstall:
     - location: scripts/deploy.sh

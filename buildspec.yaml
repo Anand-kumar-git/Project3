@@ -4,7 +4,7 @@ env:
   variables:
     REGION: "us-east-1"          # change if needed
     REPO_NAME: "project3"
-    CLUSTER_NAME: "my-eks-cluster"   # CHANGE to your EKS cluster name
+    CLUSTER_NAME: "mycluster"   # CHANGE to your EKS cluster name
 
 phases:
   pre_build:

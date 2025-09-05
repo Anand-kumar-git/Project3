@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting deployment to EKS..."
+echo "Starting deployment to EKS.."
 
 aws eks update-kubeconfig --name mycluster --region us-east-1
 

@@ -1,6 +1,11 @@
 version: 0.0
+Resources:
+  - myEKSApp:
+      Type: AWS::EKS::Application
+      Properties:
+        TaskDefinition: ""
 hooks:
   AfterInstall:
     - location: scripts/deploy.sh
-      timeout: 600
+      timeout: 300
       runas: root

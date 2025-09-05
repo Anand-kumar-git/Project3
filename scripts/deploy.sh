@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
-echo "Starting deployment to EKS.."
+echo "Starting deployment to EKS..."
 
-aws eks update-kubeconfig --name mycluster --region us-east-1
+# Navigate to k8s folder
+cd k8s
 
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
+# Apply Kubernetes manifests
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
 
-echo "Deployment completed successfully!"
+echo "Deployment completed successfully."

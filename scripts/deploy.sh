@@ -6,7 +6,7 @@ echo "Starting deployment to EKS..."
 # Navigate to k8s folder
 cd k8s
 
-# Apply Kubernetes manifests
+# Apply Kubernetes manifsts
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 

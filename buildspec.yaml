@@ -1,29 +1,39 @@
 version: 0.2
 
+env:
+  variables:
+    REGION: "us-east-1"          # change if needed
+    REPO_NAME: "project3"
+    CLUSTER_NAME: "my-eks-cluster"   # CHANGE to your EKS cluster name
+
 phases:
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR..."
+      - echo "Pre-build: get account and set image tag..."
       - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-      - REGION=us-east-1
-      - REPO_NAME=project3
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+      - echo "IMAGE_URI=$IMAGE_URI"
+      - echo "Logging into ECR..."
       - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
-      - aws eks update-kubeconfig --region $REGION --name <your-cluster-name>
-
+      - echo "Updating kubeconfig for cluster $CLUSTER_NAME"
+      - aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME
   build:
     commands:
       - echo "Building Docker image..."
       - docker build -t $REPO_NAME:$IMAGE_TAG .
       - docker tag $REPO_NAME:$IMAGE_TAG $IMAGE_URI
-
   post_build:
     commands:
-      - echo "Pushing Docker image..."
+      - echo "Pushing Docker image to ECR..."
       - docker push $IMAGE_URI
-      - echo "Updating deployment.yaml with new image..."
-      - sed -i "s|image:.*|image: $IMAGE_URI|g" k8s/deployment.yaml
-      - echo "Deploying to EKS..."
+      - echo "Replacing <IMAGE_URI> in deployment.yaml"
+      # use a robust replace that only changes the image field for the container
+      - sed -i "s|image:.*|image: $IMAGE_URI|1" k8s/deployment.yaml || true
+      - cat k8s/deployment.yaml
+      - echo "Applying k8s manifests..."
       - kubectl apply -f k8s/deployment.yaml
       - kubectl apply -f k8s/service.yaml
+artifacts:
+  files:
+    - k8s/*

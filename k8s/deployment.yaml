@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: myapp
-        image: 787755074992.dkr.ecr.us-east-1.amazonaws.com/project3:latest
+        image: <IMAGE_URI>
         ports:
         - containerPort: 80
